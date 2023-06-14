@@ -22,7 +22,6 @@ class BillingProgram(QMainWindow):
             fl_file = open(fl_file_path, "r")
             fy_file = open(fy_file_path, "w")
 
-            fy_file.write("主叫电话号码 通话类型 话费金额\n")  # 表头
 
             rate_dict = {}
             for line in fl_file:
