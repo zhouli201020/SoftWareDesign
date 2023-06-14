@@ -16,16 +16,20 @@ class BillingProgram(QMainWindow):
         self.query_button.clicked.connect(self.query_call_records)
         self.query_button.setGeometry(50, 120, 200, 50)
 
+        self.bill_query_button = QPushButton("话费查询", self)
+        self.bill_query_button.clicked.connect(self.query_bill)
+        self.bill_query_button.setGeometry(50, 190, 200, 50)
+
         self.number_label = QLabel("电话号码:", self)
-        self.number_label.setGeometry(50, 190, 100, 30)
+        self.number_label.setGeometry(50, 260, 100, 30)
 
         self.number_input = QLineEdit(self)
-        self.number_input.setGeometry(150, 190, 150, 30)
+        self.number_input.setGeometry(150, 260, 150, 30)
 
         self.table_widget = QTableWidget(self)
-        self.table_widget.setGeometry(50, 230, 700, 250)
-        self.table_widget.setColumnCount(4)
-        self.table_widget.setHorizontalHeaderLabels(["用户名", "主叫电话号码", "被叫电话号码", "通话时长"])
+        self.table_widget.setGeometry(50, 300, 700, 250)
+        self.table_widget.setColumnCount(5)
+        self.table_widget.setHorizontalHeaderLabels(["用户名", "主叫电话号码", "被叫电话号码", "通话时长", "话费总计"])
 
     def generate_billing_file(self):
         hd_file_path = "hd.txt"
@@ -35,17 +39,17 @@ class BillingProgram(QMainWindow):
         try:
             hd_file = open(hd_file_path, "r")
             fl_file = open(fl_file_path, "r")
-            fy_file = open(fy_file_path, "w", encoding="utf-8")  # 修改编码方式
+            fy_file = open(fy_file_path, "w", encoding="utf-8")
 
-            fy_file.write("主叫电话号码 通话类型 话费金额\n")  # 表头
+            #fy_file.write("主叫电话号码 通话类型 话费金额\n")
 
             rate_dict = {}
             for line in fl_file:
                 area_code, rate = line.strip().split()
                 rate_dict[area_code] = float(rate)
 
-            line_count = sum(1 for _ in hd_file)  # 获取hd_file的行数
-            hd_file.seek(0)  # 将文件指针重新定位到文件开头
+            line_count = sum(1 for _ in hd_file)
+            hd_file.seek(0)
 
             for i, line in enumerate(hd_file):
                 call_info = line.strip().split()
@@ -64,7 +68,7 @@ class BillingProgram(QMainWindow):
                     long_distance_cost = self.calculate_long_distance_cost(duration, rate_dict[callee_area_code])
                     total_cost = long_distance_cost
 
-                if i == line_count - 1:  # 最后一行
+                if i == line_count - 1:
                     fy_file.write(f"{caller_number} {call_type} {total_cost:.2f}")
                 else:
                     fy_file.write(f"{caller_number} {call_type} {total_cost:.2f}\n")
@@ -116,7 +120,7 @@ class BillingProgram(QMainWindow):
                 duration = call_info[4]
 
                 if caller_number == number or callee_number == number:
-                    user_name = user_dict.get(number, "")  # 获取对应的用户名
+                    user_name = user_dict.get(number, "")
                     call_records.append((user_name, caller_number, callee_number, duration))
 
             self.display_call_records(call_records)
@@ -128,6 +132,48 @@ class BillingProgram(QMainWindow):
             QMessageBox.warning(self, "错误", "源数据文件或用户文件不存在")
         except Exception as e:
             QMessageBox.warning(self, "错误", f"查询话单时发生错误: {str(e)}")
+
+    def query_bill(self):
+        number = self.number_input.text()
+
+        try:
+            fy_file_path = "fy.txt"
+            yh_file_path = "yh.txt"
+
+            fy_file = open(fy_file_path, "r", encoding="utf-8")
+            yh_file = open(yh_file_path, "r", encoding="utf-8")
+
+            user_dict = {}
+            local_cost = 0
+            long_distance_cost = 0
+
+            for line in yh_file:
+                phone_number, user_name = line.strip().split()
+                user_dict[phone_number] = user_name
+
+            for line in fy_file:
+                call_info = line.strip().split()
+                caller_number = call_info[0]
+                call_type = call_info[1]
+                cost = float(call_info[2])
+
+                if caller_number == number:
+                    if call_type == "本地":
+                        local_cost += cost
+                    elif call_type == "长途":
+                        long_distance_cost += cost
+
+            total_cost = local_cost + long_distance_cost
+            user_name = user_dict.get(number, "")
+
+            QMessageBox.information(self, "话费查询结果", f"用户名: {user_name}\n电话号码: {number}\n本地话费: {local_cost:.2f}\n长途话费: {long_distance_cost:.2f}\n话费总计: {total_cost:.2f}")
+
+            fy_file.close()
+            yh_file.close()
+        except FileNotFoundError:
+            QMessageBox.warning(self, "错误", "费用文件或用户文件不存在")
+        except Exception as e:
+            QMessageBox.warning(self, "错误", f"话费查询时发生错误: {str(e)}")
 
     def display_call_records(self, call_records):
         self.table_widget.setRowCount(0)
