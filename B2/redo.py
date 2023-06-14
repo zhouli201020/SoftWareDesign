@@ -1,4 +1,6 @@
 import sys
+
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QMessageBox, QLabel, QLineEdit, QVBoxLayout, QWidget, QTableWidget, QTableWidgetItem
 from PyQt5.QtCore import Qt
 
@@ -7,6 +9,7 @@ class BillingProgram(QMainWindow):
         super().__init__()
         self.setWindowTitle("电信计费程序")
         self.setGeometry(300, 300, 800, 600)
+        self.setWindowIcon(QIcon("icon.ico"))
 
         self.generate_button = QPushButton("生成费用文件", self)
         self.generate_button.clicked.connect(self.generate_billing_file)
