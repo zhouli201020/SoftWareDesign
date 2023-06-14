@@ -30,6 +30,7 @@ class BillingProgram(QMainWindow):
         self.table_widget.setGeometry(50, 300, 700, 250)
         self.table_widget.setColumnCount(5)
         self.table_widget.setHorizontalHeaderLabels(["用户名", "主叫电话号码", "被叫电话号码", "通话时长", "话费总计"])
+        self.table_widget.setColumnHidden(4, True)
 
     def generate_billing_file(self):
         hd_file_path = "hd.txt"
