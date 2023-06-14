@@ -22,13 +22,17 @@ class BillingProgram(QMainWindow):
             fl_file = open(fl_file_path, "r")
             fy_file = open(fy_file_path, "w")
 
+            fy_file.write("主叫电话号码 通话类型 话费金额\n")  # 表头
 
             rate_dict = {}
             for line in fl_file:
                 area_code, rate = line.strip().split()
                 rate_dict[area_code] = float(rate)
 
-            for line in hd_file:
+            line_count = sum(1 for _ in hd_file)  # 获取hd_file的行数
+            hd_file.seek(0)  # 将文件指针重新定位到文件开头
+
+            for i, line in enumerate(hd_file):
                 call_info = line.strip().split()
                 caller_area_code = call_info[0]
                 caller_number = call_info[1]
@@ -45,7 +49,10 @@ class BillingProgram(QMainWindow):
                     long_distance_cost = self.calculate_long_distance_cost(duration, rate_dict[callee_area_code])
                     total_cost = long_distance_cost
 
-                fy_file.write(f"{caller_number} {call_type} {total_cost:.2f}\n")
+                if i == line_count - 1:  # 最后一行
+                    fy_file.write(f"{caller_number} {call_type} {total_cost:.2f}")
+                else:
+                    fy_file.write(f"{caller_number} {call_type} {total_cost:.2f}\n")
 
             fy_file.close()
             hd_file.close()
