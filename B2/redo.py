@@ -1,16 +1,31 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QMessageBox, QLabel, QLineEdit, QVBoxLayout, QWidget, QTableWidget, QTableWidgetItem
 from PyQt5.QtCore import Qt
 
 class BillingProgram(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("电信计费程序")
-        self.setGeometry(300, 300, 300, 200)
+        self.setGeometry(300, 300, 800, 600)
 
         self.generate_button = QPushButton("生成费用文件", self)
         self.generate_button.clicked.connect(self.generate_billing_file)
         self.generate_button.setGeometry(50, 50, 200, 50)
+
+        self.query_button = QPushButton("话单查询", self)
+        self.query_button.clicked.connect(self.query_call_records)
+        self.query_button.setGeometry(50, 120, 200, 50)
+
+        self.number_label = QLabel("电话号码:", self)
+        self.number_label.setGeometry(50, 190, 100, 30)
+
+        self.number_input = QLineEdit(self)
+        self.number_input.setGeometry(150, 190, 150, 30)
+
+        self.table_widget = QTableWidget(self)
+        self.table_widget.setGeometry(50, 230, 700, 250)
+        self.table_widget.setColumnCount(4)
+        self.table_widget.setHorizontalHeaderLabels(["用户名", "主叫电话号码", "被叫电话号码", "通话时长"])
 
     def generate_billing_file(self):
         hd_file_path = "hd.txt"
@@ -20,7 +35,7 @@ class BillingProgram(QMainWindow):
         try:
             hd_file = open(hd_file_path, "r")
             fl_file = open(fl_file_path, "r")
-            fy_file = open(fy_file_path, "w")
+            fy_file = open(fy_file_path, "w", encoding="utf-8")  # 修改编码方式
 
             fy_file.write("主叫电话号码 通话类型 话费金额\n")  # 表头
 
@@ -74,6 +89,53 @@ class BillingProgram(QMainWindow):
     def calculate_long_distance_cost(self, duration, rate):
         minutes = (duration + 59) // 60
         return rate * minutes
+
+    def query_call_records(self):
+        number = self.number_input.text()
+
+        try:
+            hd_file_path = "hd.txt"
+            fy_file_path = "fy.txt"
+            yh_file_path = "yh.txt"
+
+            hd_file = open(hd_file_path, "r", encoding="utf-8")
+            fy_file = open(fy_file_path, "r", encoding="utf-8")
+            yh_file = open(yh_file_path, "r", encoding="utf-8")
+
+            call_records = []
+            user_dict = {}
+
+            for line in yh_file:
+                phone_number, user_name = line.strip().split()
+                user_dict[phone_number] = user_name
+
+            for line in hd_file:
+                call_info = line.strip().split()
+                caller_number = call_info[1]
+                callee_number = call_info[3]
+                duration = call_info[4]
+
+                if caller_number == number or callee_number == number:
+                    user_name = user_dict.get(number, "")  # 获取对应的用户名
+                    call_records.append((user_name, caller_number, callee_number, duration))
+
+            self.display_call_records(call_records)
+
+            hd_file.close()
+            fy_file.close()
+            yh_file.close()
+        except FileNotFoundError:
+            QMessageBox.warning(self, "错误", "源数据文件或用户文件不存在")
+        except Exception as e:
+            QMessageBox.warning(self, "错误", f"查询话单时发生错误: {str(e)}")
+
+    def display_call_records(self, call_records):
+        self.table_widget.setRowCount(0)
+
+        for row, record in enumerate(call_records):
+            self.table_widget.insertRow(row)
+            for col, data in enumerate(record):
+                self.table_widget.setItem(row, col, QTableWidgetItem(str(data)))
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
