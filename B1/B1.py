@@ -1,4 +1,6 @@
 import sys
+
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidget, QTableWidgetItem, QPushButton, QFileDialog, QMessageBox
 
 class MainWindow(QMainWindow):
@@ -6,6 +8,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("学生成绩核算系统")
         self.setGeometry(100, 100, 920, 400)
+        self.setWindowIcon(QIcon("icon.ico"))
 
         self.table = QTableWidget(self)
         self.table.setGeometry(20, 20, 900, 300)
