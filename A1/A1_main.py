@@ -8,7 +8,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("分数统计软件")
-        self.resize(360, 500)
+        self.resize(380, 500)
 
         # 设置窗口图标
         self.setWindowIcon(QIcon("icon.ico"))
