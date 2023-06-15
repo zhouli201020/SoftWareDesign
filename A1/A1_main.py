@@ -74,6 +74,8 @@ class MainWindow(QMainWindow):
 
         try:
             score = float(score)
+            if score < 0:
+                raise ValueError("Negative score not allowed")
         except ValueError:
             # 如果输入的成绩无法转换为浮点数，则给出提示并清空输入框
             self.score_input.clear()
