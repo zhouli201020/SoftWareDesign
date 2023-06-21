@@ -7,14 +7,15 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("学生成绩核算系统")
-        self.setGeometry(100, 100, 920, 400)
+        self.setGeometry(100, 100, 1000, 400)
         self.setWindowIcon(QIcon("icon.ico"))
 
         self.table = QTableWidget(self)
-        self.table.setGeometry(20, 20, 900, 300)
+        self.table.setGeometry(20, 20, 960, 300)
         self.table.setColumnCount(7)
         self.table.setHorizontalHeaderLabels(['学号', '平时成绩', '期中成绩', '期末成绩', '总评成绩', '等级', ''])
         self.table.horizontalHeader().setStretchLastSection(True)
+        self.table.setColumnHidden(6, True)
 
         self.file_imported = False
         self.grades_calculated = False
