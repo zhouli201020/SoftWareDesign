@@ -12,7 +12,7 @@ class TypingGame(QWidget):
 
     def initUI(self):
         self.setWindowTitle('打字程序')
-        self.setWindowIcon(QIcon("icon.ico"))
+        self.setWindowIcon(QIcon("Icon-A2.ico"))
 
         self.textLabel = QLabel()
         self.inputLineEdit = QLineEdit()

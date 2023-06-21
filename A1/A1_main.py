@@ -10,7 +10,7 @@ class MainWindow(QMainWindow):
         self.resize(380, 500)
 
         # 设置窗口图标
-        self.setWindowIcon(QIcon("icon.ico"))
+        self.setWindowIcon(QIcon("Icon-A1.ico"))
 
         # 设置字体样式
         font = QFont()

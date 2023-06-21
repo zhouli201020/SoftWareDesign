@@ -8,7 +8,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("学生成绩核算系统")
         self.setGeometry(100, 100, 1000, 400)
-        self.setWindowIcon(QIcon("icon.ico"))
+        self.setWindowIcon(QIcon("Icon-B1.ico"))
 
         self.table = QTableWidget(self)
         self.table.setGeometry(20, 20, 960, 300)

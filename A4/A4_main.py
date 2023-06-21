@@ -8,7 +8,7 @@ class EncryptionProgram(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("加密程序")
-        self.setWindowIcon(QIcon("icon.ico"))
+        self.setWindowIcon(QIcon("Icon-A1.ico"))
 
         title_font = QFont()
         title_font.setPointSize(14)

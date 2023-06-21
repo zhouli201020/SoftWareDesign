@@ -9,7 +9,7 @@ class ConverterWindow(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("进制转换器")
-        self.setWindowIcon(QIcon("icon.ico"))
+        self.setWindowIcon(QIcon("Icon-A1.ico"))
         self.setGeometry(100, 100, 320, 210)
 
         self.decimal_label = QLabel("十进制:", self)
